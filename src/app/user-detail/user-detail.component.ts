@@ -1,8 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { User } from 'src/models/user.class';
+import { DialogEditAddressComponent } from '../dialog-edit-address/dialog-edit-address.component';
+import { DialogAddUserComponent } from '../dialog-add-user/dialog-add-user.component';
+import { DialogEditUserComponent } from '../dialog-edit-user/dialog-edit-user.component';
 
 @Component({
   selector: 'app-user-detail',
@@ -15,10 +19,10 @@ export class UserDetailComponent {
   firestore: Firestore = inject(Firestore);
   users$: Observable<any> | undefined;
   userCollection = collection(this.firestore, 'users');
-  data: User = new User();
+  data: User = new User ();
 
 
-  constructor(private route: ActivatedRoute){
+  constructor(private route: ActivatedRoute, public dialog: MatDialog){
   
   }
 
@@ -32,12 +36,21 @@ export class UserDetailComponent {
 
   }
 
-  getUser(){
-    this.users$ = collectionData(this.userCollection);
-    this.users$.subscribe(user => {
-      this.data = new User(user);
-      console.log('This', this.data)
-    });
+  async getUser(){
+    const userDoc = doc(this.userCollection, this.userId);
+    const userData = await getDoc(userDoc);
+    this.data = new User(userData.data());
+  }
+
+  editMenu(){
+    const dialogRef = this.dialog.open(DialogEditAddressComponent);
+    dialogRef.componentInstance.user = this.data;
+    
+  };
+
+  editUserDetail(){
+    const dialogRef = this.dialog.open(DialogEditUserComponent);
+    dialogRef.componentInstance.user = this.data;
   }
 
 
