@@ -17,13 +17,14 @@ export class UserComponent {
   users$: Observable<any> | undefined;
   userCollection = collection(this.firestore, 'users');
   displayedColumns: string[] = ['name', 'email', 'city'];
-  data: any[] = []; // Update this with your actual data array
+  data: any[] = []; 
 
 
   constructor(public dialog: MatDialog){
-    this.users$ = collectionData(this.userCollection);
+    this.users$ = collectionData(this.userCollection, {idField : 'id'});
     this.users$.subscribe(user => {
       this.data = user;
+      // console.log(this.data)
     });
   }
 
