@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -44,14 +44,28 @@ export class UserDetailComponent {
 
   editMenu(){
     const dialogRef = this.dialog.open(DialogEditAddressComponent);
-    dialogRef.componentInstance.user = this.data;
+    dialogRef.componentInstance.user = new User (this.data.toJSON()); 
+    dialogRef.componentInstance.userId = this.userId;
+
+    dialogRef.afterClosed().subscribe((result: any)=> {
+      console.log('The dialog was closed');
+      this.getUser()
+    });
     
-  };
+  }
 
   editUserDetail(){
     const dialogRef = this.dialog.open(DialogEditUserComponent);
-    dialogRef.componentInstance.user = this.data;
+    dialogRef.componentInstance.user = new User (this.data.toJSON());
+    dialogRef.componentInstance.userId = this.userId;
+
+    dialogRef.afterClosed().subscribe((result: any)=> {
+      console.log('The dialog was closed');
+      this.getUser();
+    });
   }
+
+
 
 
 }
